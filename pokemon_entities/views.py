@@ -1,6 +1,7 @@
 import folium
 import json
 
+from django.utils import timezone
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from pokemon_entities.models import Pokemon, PokemonEntity
@@ -32,8 +33,13 @@ def show_all_pokemons(request):
         pokemons = json.load(database)['pokemons']
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
+    now_local = timezone.localtime()
     for pokemon in Pokemon.objects.all():
-        for pokemon_entity in PokemonEntity.objects.all().filter(pokemon=pokemon):
+        for pokemon_entity in PokemonEntity.objects.all().filter(
+            pokemon=pokemon,
+            appeared_at__lte=now_local,
+            disappeared_at__gte=now_local
+        ):
             add_pokemon(
                 folium_map, pokemon_entity.lat,
                 pokemon_entity.lon,
