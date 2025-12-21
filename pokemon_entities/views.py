@@ -1,5 +1,4 @@
 import folium
-# import json
 
 from django.utils import timezone
 from django.http import HttpResponseNotFound
@@ -85,8 +84,13 @@ def show_pokemon(request, pokemon_id):
         'previous_evolution': {
             'title_ru': requested_pokemon.previous_evolution.title,
             'pokemon_id': requested_pokemon.previous_evolution.id,
-            'img_url': requested_pokemon.previous_evolution.image.url,
+            'img_url': request.build_absolute_uri(requested_pokemon.previous_evolution.image.url),
         } if requested_pokemon.previous_evolution else None,
+        'next_evolution': {
+            'title_ru': requested_pokemon.pokemon_set.get().title,
+            'pokemon_id': requested_pokemon.pokemon_set.get().id,
+            'img_url': request.build_absolute_uri(requested_pokemon.pokemon_set.get().image.url),
+        } if len(requested_pokemon.pokemon_set.all())!=0 else None,
     }
 
     return render(request, 'pokemon.html', context={
