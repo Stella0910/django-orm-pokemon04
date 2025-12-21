@@ -39,7 +39,8 @@ def show_all_pokemons(request):
             add_pokemon(
                 folium_map, pokemon_entity.lat,
                 pokemon_entity.lon,
-                request.build_absolute_uri(pokemon.image.url),
+                request.build_absolute_uri(pokemon.image.url)
+                if pokemon.image else DEFAULT_IMAGE_URL,
             )
 
     pokemons_on_page = []
@@ -72,11 +73,13 @@ def show_pokemon(request, pokemon_id):
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
             request.build_absolute_uri(requested_pokemon.image.url)
+            if requested_pokemon.image else DEFAULT_IMAGE_URL,
         )
 
     pokemon_on_page = {
         'pokemon_id': requested_pokemon.id,
-        'img_url': request.build_absolute_uri(requested_pokemon.image.url),
+        'img_url': request.build_absolute_uri(requested_pokemon.image.url)
+        if requested_pokemon.image else DEFAULT_IMAGE_URL,
         'title_ru': requested_pokemon.title,
         'description': requested_pokemon.description,
         'title_en': requested_pokemon.title_en,
@@ -84,12 +87,14 @@ def show_pokemon(request, pokemon_id):
         'previous_evolution': {
             'title_ru': requested_pokemon.previous_evolution.title,
             'pokemon_id': requested_pokemon.previous_evolution.id,
-            'img_url': request.build_absolute_uri(requested_pokemon.previous_evolution.image.url),
+            'img_url': request.build_absolute_uri(requested_pokemon.previous_evolution.image.url)
+            if requested_pokemon.previous_evolution.image else DEFAULT_IMAGE_URL,
         } if requested_pokemon.previous_evolution else None,
         'next_evolution': {
             'title_ru': requested_pokemon.pokemon_set.get().title,
             'pokemon_id': requested_pokemon.pokemon_set.get().id,
-            'img_url': request.build_absolute_uri(requested_pokemon.pokemon_set.get().image.url),
+            'img_url': request.build_absolute_uri(requested_pokemon.pokemon_set.get().image.url)
+            if requested_pokemon.pokemon_set.get().image else DEFAULT_IMAGE_URL,
         } if len(requested_pokemon.pokemon_set.all())!=0 else None,
     }
 

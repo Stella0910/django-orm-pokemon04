@@ -9,15 +9,17 @@ class Pokemon(models.Model):
     description = models.TextField(verbose_name='Описание', blank=True)
     title_en = models.CharField(
         verbose_name='Название по-английски',
-        max_length=200, blank=True
+        max_length=200,
+        blank=True
     )
     title_jp = models.CharField(
         verbose_name='Название по-японски',
-        max_length=200, blank=True
+        max_length=200,
+        blank=True
     )
     previous_evolution = models.ForeignKey(
         'self',
-        verbose_name='Из кого эволюционировал',
+        verbose_name='Предыдущая эволюция',
         on_delete=models.CASCADE,
         null=True,
         blank=True
@@ -37,11 +39,11 @@ class PokemonEntity(models.Model):
     lon = models.FloatField(verbose_name='Долгота')
     appeared_at = models.DateTimeField(verbose_name='Время появления')
     disappeared_at = models.DateTimeField(verbose_name='Время исчезновения')
-    level = models.IntegerField(verbose_name='Уровень')
-    health = models.IntegerField(verbose_name='Здоровье')
-    attack = models.IntegerField(verbose_name='Атака')
-    defense = models.IntegerField(verbose_name='Защита')
-    stamina = models.IntegerField(verbose_name='Выносливость')
+    level = models.IntegerField(verbose_name='Уровень', null=True, blank=True)
+    health = models.IntegerField(verbose_name='Здоровье', null=True, blank=True)
+    attack = models.IntegerField(verbose_name='Атака', null=True, blank=True)
+    defense = models.IntegerField(verbose_name='Защита', null=True, blank=True)
+    stamina = models.IntegerField(verbose_name='Выносливость', null=True, blank=True)
 
     def __str__(self):
-        return f'{self.pokemon} {self.level}'
+        return f'{self.pokemon}'
