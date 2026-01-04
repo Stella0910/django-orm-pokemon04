@@ -59,7 +59,11 @@ def show_pokemon(request, pokemon_id):
     requested_pokemon = get_object_or_404(Pokemon, id=int(pokemon_id))
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    for pokemon_entity in requested_pokemon.entities.all():
+    now_local = timezone.localtime()
+    for pokemon_entity in requested_pokemon.entities.filter(
+        appeared_at__lte=now_local,
+        disappeared_at__gte=now_local
+    ):
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
