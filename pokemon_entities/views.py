@@ -31,8 +31,7 @@ def show_all_pokemons(request):
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     now_local = timezone.localtime()
     for pokemon in Pokemon.objects.all():
-        for pokemon_entity in PokemonEntity.objects.filter(
-            pokemon=pokemon,
+        for pokemon_entity in pokemon.entities.filter(
             appeared_at__lte=now_local,
             disappeared_at__gte=now_local
         ):
@@ -66,9 +65,7 @@ def show_pokemon(request, pokemon_id):
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    for pokemon_entity in PokemonEntity.objects.filter(
-        pokemon__title=f"{requested_pokemon.title}"
-        ):
+    for pokemon_entity in requested_pokemon.entities.all():
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
@@ -91,11 +88,11 @@ def show_pokemon(request, pokemon_id):
             if requested_pokemon.previous_evolution.image else DEFAULT_IMAGE_URL,
         } if requested_pokemon.previous_evolution else None,
         'next_evolution': {
-            'title_ru': requested_pokemon.pokemon_set.get().title,
-            'pokemon_id': requested_pokemon.pokemon_set.get().id,
-            'img_url': request.build_absolute_uri(requested_pokemon.pokemon_set.get().image.url)
-            if requested_pokemon.pokemon_set.get().image else DEFAULT_IMAGE_URL,
-        } if len(requested_pokemon.pokemon_set.all())!=0 else None,
+            'title_ru': requested_pokemon.next_evolution.get().title,
+            'pokemon_id': requested_pokemon.next_evolution.get().id,
+            'img_url': request.build_absolute_uri(requested_pokemon.next_evolution.get().image.url)
+            if requested_pokemon.next_evolution.get().image else DEFAULT_IMAGE_URL,
+        } if len(requested_pokemon.next_evolution.all())!=0 else None,
     }
 
     return render(request, 'pokemon.html', context={
